@@ -15,35 +15,13 @@ int main(){
 
     //------------------TRATAMENTO DE ERROS-------------------//
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //---------------------------------------------------------//
-
-
-
-
 
     int opcao;   
 
-
-
     do{
         printf("\n\033[34m|==============================|\n");
-        printf("|- - - Agenda de Contatos - - -|\n");
+        printf("|- - - - Quem Poupa Tem - - - -|\n");
         printf("| 1 - Novo Cliente             |\n");
         printf("| 2 - Deletar Cliente          |\n");
         printf("| 3 - Listar Cliente           |\n");
