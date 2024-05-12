@@ -45,9 +45,10 @@ int main(){
         else{
             opcao = menus[1]();
         }
+        opcao--;
          Value resposta = functions[opcao](contas, &pos, &user);
 
-    }while(opcao != 0);
+    }while(opcao != -1);
     
     
     
