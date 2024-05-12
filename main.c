@@ -5,7 +5,7 @@
 
 int main(){
 
-    func functions[] = { deposito, debito, transacao, extrato, novo_cliente, deletar_cliente, listar_cliente};
+    func functions[] = { deposito, debito, transacao, extrato, novo_cliente, listar_cliente, deletar_cliente};
     Conta contas[TOTAL];
     int pos = 0;  
     int user;
@@ -40,10 +40,10 @@ int main(){
     menu menus[] = {menu_adm, menu_user};
     do{
         if(user == -1){
-            opcao = menus[0]();
+            opcao = menus[1]();
         }
         else{
-            opcao = menus[1]();
+            opcao = menus[0]();
         }
         opcao--;
          Value resposta = functions[opcao](contas, &pos, &user);
