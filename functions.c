@@ -4,6 +4,12 @@
 #include "functions.h"
 
 
+
+
+
+//Funções ADM
+
+
 Value novo_cliente(Conta contas[], int *pos, int *user){ 
     printf("novo");
 }    // Função de Criar um novo cliente
@@ -13,6 +19,11 @@ Value deletar_cliente(Conta contas[], int *pos, int *user) {
 Value listar_cliente(Conta contas[], int *pos, int *user) {
      printf("Lista");
 } // Função de Listar os clientes
+
+
+
+// Funções fundamentais
+
 Value debito(Conta contas[], int *pos, int *user) {
      printf("debito");
 }         // Função de debitar dinheiro de uma conta

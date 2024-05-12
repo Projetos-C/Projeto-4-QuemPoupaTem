@@ -14,19 +14,13 @@ typedef struct {
 typedef struct {
     char cpf[T_CPF];
     char nome[T_NOME];
-    char senha[SENHA];
+    const char* senha;
     int tipo_conta; // 1 = Comum / 2 = Plus
     Extrato extrato[T_EXTRATO]; 
     float Saldo;
 } Conta;
 
-typedef struct {
-    int typeUser;
-    Conta contas[TOTAL];
-    int pos;
-} MenuVal; 
-
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTATO, SEM_CONTATO, AUTENTICACAO } Value;
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO } Value;
 
 typedef int (*menu)();
 typedef Value (*func)(Conta[], int*, int*);
@@ -52,7 +46,7 @@ int menu_user();       // Menu de Usuário Comum
 // Funções de Autenticação
 Value login(Conta contas[], int *pos, int *user); 
 Value cadastro(Conta contas[], int *pos, int *user);
-Value hash(char senha[], int *pos);
+char* hash(const char* senha);
 Value hash_compare(char hash[], char senha[], int *pos);
 
 
