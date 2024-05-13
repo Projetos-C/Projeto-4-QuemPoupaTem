@@ -24,6 +24,7 @@ typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, A
 
 typedef int (*menu)();
 typedef Value (*func)(Conta[], int*, int*);
+typedef Value (*arc)(Conta[], int*);
 
 
 Value novo_cliente(Conta contas[], int *pos, int *user);    // Função de Criar um novo cliente
@@ -33,8 +34,8 @@ Value debito(Conta contas[], int *pos, int *user);          // Função de debit
 Value deposito(Conta contas[], int *pos, int *user);        // Função de depositar um valor em uma conta
 Value extrato(Conta contas[], int *pos, int *user);         // Função de gerar extrato do cliente
 Value transacao(Conta contas[], int *pos, int *user);       // Função de realizar transacao entre contas
-Value salvar(Conta contas[], int *pos, int *user);          // Função de Salvar a lista de contatos no arquivo binário
-Value carregar(Conta contas[], int *pos, int *user);        // Função de Carregar a lista de contatos do arquivo binário
+Value salvar(Conta contas[], int *pos);          // Função de Salvar a lista de contatos no arquivo binário
+Value carregar(Conta contas[], int *pos);        // Função de Carregar a lista de contatos do arquivo binário
 
 
 // Menus 

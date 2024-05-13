@@ -5,12 +5,16 @@
 
 int main(){
 
-    func functions[] = { deposito, debito, transacao, extrato, novo_cliente, listar_cliente, deletar_cliente};
+    func functions[] = { deposito, debito, transacao, extrato, novo_cliente, listar_cliente, deletar_cliente}; 
+    arc arquivo[] = {salvar, carregar};
     Conta contas[TOTAL];
     int pos = 0;  
     int user;
     int auth = 0; // Autenticação
     int entrada; // Váriavel recebe a resposta do menu de entrada
+    Value carregar = arquivo[1](contas, &pos);
+
+
     do{ 
         Value val;
         int entrada = menu_login(contas, &pos);
@@ -26,6 +30,7 @@ int main(){
         }
         // Caso o usuário queira sair;
         else if( entrada == 0){
+            
             break;
         }
 
@@ -46,9 +51,11 @@ int main(){
             opcao = menus[0]();
         }
         opcao--;
-         Value resposta = functions[opcao](contas, &pos, &user);
+        printf("%d\n %d\n", pos, opcao);
+        Value resposta = functions[opcao](contas, &pos, &user);
 
     }while(opcao != -1);
+    Value salvar = arquivo[0](contas, &pos);
     
     
     

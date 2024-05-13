@@ -35,7 +35,7 @@ Value cadastro(Conta contas[], int *pos, int *user){
         printf("| > CPF (Ex: 112345678900): ");
         fgets(cpf, T_CPF, stdin);
 
-        cpf[strcspn(cpf, "\n")] = '\0'; // Remove o \n do final do número informado;
+        cpf[strcspn(cpf, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if(strlen(cpf) > 11){ // Verifica se o tamanho do cpf é válido
             cpfCorrect = 0;
         }
@@ -75,6 +75,7 @@ Value cadastro(Conta contas[], int *pos, int *user){
         clearBuffer();
         
         if (tipo_conta == 'c' || tipo_conta == 'p') {
+            contas[*pos].tipo_conta = tipo_conta;
             isValidType = 1;
         } else {
             printf("\033[31m| > Tipo de conta invalido, Tente novamente...\n");
@@ -127,6 +128,7 @@ Value cadastro(Conta contas[], int *pos, int *user){
         }
     } while (!senhaCorrect);
     contas[*pos].senha = hash(senha);
+    pos++;
     return OK;
 }; 
 
