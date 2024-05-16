@@ -11,7 +11,7 @@ typedef struct {
 
 } Extrato;
 
-typedef struct {
+typedef struct { // Estrutura das contas
     char cpf[T_CPF];
     char nome[T_NOME];
     const char* senha;
@@ -20,22 +20,29 @@ typedef struct {
     float Saldo;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO } Value;
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO } Value; // Tipoes de respostas em funções
 
-typedef int (*menu)();
-typedef Value (*func)(Conta[], int*, int*);
-typedef Value (*arc)(Conta[], int*);
+typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
+typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais
+typedef Value (*arc)(Conta[], int*); // Forma simplificada de chamar funções relacionada ao tratamento de arquivos
 
 
+// Clientes 
 Value novo_cliente(Conta contas[], int *pos, int *user);    // Função de Criar um novo cliente
 Value deletar_cliente(Conta contas[], int *pos, int *user); // Função de Deletar um cliente
 Value listar_cliente(Conta contas[], int *pos, int *user);  // Função de Listar os clientes
+
+
+// Operações Bancárias
 Value debito(Conta contas[], int *pos, int *user);          // Função de debitar dinheiro de uma conta
 Value deposito(Conta contas[], int *pos, int *user);        // Função de depositar um valor em uma conta
 Value extrato(Conta contas[], int *pos, int *user);         // Função de gerar extrato do cliente
 Value transacao(Conta contas[], int *pos, int *user);       // Função de realizar transacao entre contas
-Value salvar(Conta contas[], int *pos);          // Função de Salvar a lista de contatos no arquivo binário
-Value carregar(Conta contas[], int *pos);        // Função de Carregar a lista de contatos do arquivo binário
+
+
+// Arquivo
+Value salvar(Conta contas[], int *pos);                     // Função de Salvar a lista de contatos no arquivo binário
+Value carregar(Conta contas[], int *pos);                   // Função de Carregar a lista de contatos do arquivo binário
 
 
 // Menus 
@@ -46,9 +53,9 @@ int menu_user();       // Menu de Usuário Comum
 
 // Funções de Autenticação
 Value login(Conta contas[], int *pos, int *user); 
-Value cadastro(Conta contas[], int *pos, int *user);
-char* hash(const char* senha);
-Value hash_compare(char hash[], char senha[], int *pos);
+
+char* hash(const char* senha); // Cria um hash da senha
+int compareHash(const char* senha, const char* hash);  // Verifica uma senha e um hash
 
 
 //Funções auxiliares
