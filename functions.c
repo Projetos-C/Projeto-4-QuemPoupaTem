@@ -116,7 +116,7 @@ Value novo_cliente(Conta contas[], int *pos, int *user){  // Função de Criar u
             senhaCorrect = 0; // Define senhaCorrect como 0 para repetir o loop
         }
     } while (!senhaCorrect);
-    contas[*pos].senha = hash(senha);
+    strcpy(contas[*pos].senha, hash(senha));
     *user = *pos;
     *pos = *pos + 1;
 
@@ -224,3 +224,12 @@ Value carregar(Conta contatos[], int *pos){ // Função de Carregar a lista de c
     return OK;
 
 }        
+
+int findCPF(Conta contas[], int pos, const char* cpf){
+    for (int i = 0; i < pos; i++) {
+        if (strcmp(cpf, contas[i].cpf) == 0) {
+            return i; // Retorna o índice da conta quando o CPF for encontrado
+        }
+    }
+    return -1; // Retorna -1 se o CPF não for encontrado
+}

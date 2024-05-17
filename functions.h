@@ -4,6 +4,9 @@
 #define SENHA 100
 #define T_EXTRATO 100
 
+typedef char* SenhaType; 
+
+
 typedef struct {
     int tipo; // 1 = Deposito / 2 = Débito / 3 = Transferência Receber / 4 = Trasnferência Pagar
     int data;
@@ -14,7 +17,7 @@ typedef struct {
 typedef struct { // Estrutura das contas
     char cpf[T_CPF];
     char nome[T_NOME];
-    const char* senha;
+    char senha[SENHA];
     int tipo_conta; // 1 = Comum / 2 = Plus
     Extrato extrato[T_EXTRATO]; 
     float Saldo;
@@ -54,10 +57,11 @@ int menu_user();       // Menu de Usuário Comum
 // Funções de Autenticação
 Value login(Conta contas[], int *pos, int *user); 
 
-char* hash(const char* senha); // Cria um hash da senha
-int compareHash(const char* senha, const char* hash);  // Verifica uma senha e um hash
+const char* hash(const char* senha); // Cria um hash da senha
+int compareHash(const char* senha, const char* hash_cpf);  // Verifica uma senha e um hash
 
 
 //Funções auxiliares
 void clearBuffer();        // Limpeza de Buffer
 void tratarRes(Value err);  // Tratamento de Erros
+int findCPF(Conta contas[], int pos, const char* cpf); // Compara um cpf com a lista de contas

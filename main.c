@@ -50,17 +50,37 @@ int main(){
     do{
         if(user == -1){
             opcao = menus[1](); // Adm
+            opcao--;
+            if(opcao == -1){
+                printf("| > Encerrando...\n");
+            }
+            else if(opcao >= 0 && opcao <= 6){
+                Value funcao =functions[opcao](contas, &pos, &user);
+                tratarRes(funcao);
+            }
+            else{
+                printf("| > Opção Inválida...\n");
+            }
         }
         else{
             opcao = menus[2](); // User
+            opcao--;
+            if(opcao == -1){
+                printf("| > Encerrando...\n");
+            }
+            else if(opcao >= 0 && opcao <= 3){
+                Value funcao = functions[opcao](contas, &pos, &user);
+                tratarRes(funcao);
+            }
+            else{
+                printf("| > Opção Inválida...\n");
+            }
         }
-        opcao--;
-        Value resposta = functions[opcao](contas, &pos, &user);
+        
 
     }while(opcao != -1);
     Value salvar = arquivo[0](contas, &pos);
-    
-    
+    tratarRes(salvar);
     
     return 0;
 }
