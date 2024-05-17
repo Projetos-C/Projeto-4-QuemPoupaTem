@@ -51,20 +51,21 @@ Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
             }
         }
     }while(!cpfCorrect);
-    clearBuffer();
     int passwordValidate = 0;
+    clearBuffer();
     int adminTrue = 0;
     int cpfPos;
     char password[SENHA];
     do{
         printf("| > Senha: ");
         fgets(password, SENHA, stdin);
+        clearBuffer();
         password[strcspn(password, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if (!isAdmin) { // Se tentar entrar com Administrador, Verifica a senha com o de Admin
             char* hash_cpf[SENHA];
-            
+
             int compare = compareHash(password, contas[*user].senha);
- 
+
             if(compare){
                 passwordValidate = 1;
             }
@@ -73,7 +74,7 @@ Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
             }
             /*
             */
-            
+
         }
         else{
             const char* adminPassword =  "Mpyuz>@"; // Senha é "Admin24"

@@ -35,7 +35,7 @@ int main(){
         }
         // Caso o usuário queira sair;
         else if( entrada == 0){
-            
+
             break;
         }
 
@@ -76,11 +76,11 @@ int main(){
                 printf("| > Opção Inválida...\n");
             }
         }
-        
+
 
     }while(opcao != -1);
     Value salvar = arquivo[0](contas, &pos);
     tratarRes(salvar);
-    
+
     return 0;
 }
