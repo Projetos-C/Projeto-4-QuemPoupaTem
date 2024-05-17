@@ -190,47 +190,69 @@ Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Lista
 // Funções Bancárias
 // Operações com valores monetários
 Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinheiro de uma conta
-    Value validacao = login(contas, pos, user);
-    if(validacao == OK) {
-        float valor;
-        int tipo_conta;
-        float saldo_novo;
-        printf("| > Valor a ser debitado: ");
-        scanf("%f", &valor);
-        clearBuffer();
-        tipo_conta = contas[*user].tipo_conta;
-        if (tipo_conta == 1) {
-          valor += (valor * 0.05);
-          saldo_novo = contas[*user].Saldo - valor;
-          if (saldo_novo <= -1000) {
-            printf("\033[33m| > Saldo insuficiente.");
-          } else {
-            contas[*user].Saldo = saldo_novo;
-            printf("\033[32m| > Débito realizado.\n");
-            printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
-            } 
+  char cpf_origem[T_CPF];
+  int posicao;
+  float saldo_novo;
+  int validacao = 0;
+  if(*user == -1){
+    do{
+      printf("| > CPF: ");
+      scanf("%s", cpf_origem);
+      clearBuffer();
+      posicao = findCPF(contas, *pos, cpf_origem);
+      if(posicao == -1){
+        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      }
+      else{
+        validacao = 1;
+      }
+    }while(!validacao);
+
+  }else{
+    posicao = *user;
+    validacao = 1;
+  }
+
+  if(validacao ) {
+      float valor;
+      int tipo_conta;
+      float saldo_novo;
+      printf("| > Valor a ser debitado: ");
+      scanf("%f", &valor);
+      clearBuffer();
+      tipo_conta = contas[posicao].tipo_conta;
+      if (tipo_conta == 1) {
+        valor += (valor * 0.05);
+        saldo_novo = contas[posicao].Saldo - valor;
+        if (saldo_novo <= -1000) {
+          printf("\033[33m| > Saldo insuficiente.");
+        } else {
+          contas[posicao].Saldo = saldo_novo;
+          printf("\033[32m| > Débito realizado.\n");
+          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
           } 
-          else {
-            valor += (valor * 0.03);
-            saldo_novo = contas[*user].Saldo - valor;
-          if (saldo_novo <= -5000) {
-            printf("|> Saldo insuficiente.");
-          } else {
-            contas[*user].Saldo = saldo_novo;
-            printf("\033[32m| > Débito realizado.\n");
-            printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
-        }
+        } 
+        else {
+          valor += (valor * 0.03);
+          saldo_novo = contas[posicao].Saldo - valor;
+        if (saldo_novo <= -5000) {
+          printf("|> Saldo insuficiente.");
+        } else {
+          contas[posicao].Saldo = saldo_novo;
+          printf("\033[32m| > Débito realizado.\n");
+          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
       }
     }
-    
+  }
+  
   return OK;
 }
 
 Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
+  printf("dpo");
 }
 
-Value extrato(Conta contas[], int *pos,
-              int *user) { // Função de gerar extrato do cliente
+Value extrato(Conta contas[], int *pos,int *user) { // Função de gerar extrato do cliente
   printf("extrado");
   return OK;
 }
