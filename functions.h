@@ -23,7 +23,7 @@ typedef struct { // Estrutura das contas
     float Saldo;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO } Value; // Tipoes de respostas em funções
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO } Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
 typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais

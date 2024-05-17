@@ -13,12 +13,12 @@ Value login(Conta contas[], int *pos, int *user){ // Função de Login
     int cont = 0;
     char cpf[T_CPF];
     do{
+        printf("| > CPF (Ex: 112345678900): ");
+        scanf("%s", cpf);
+        clearBuffer();
+
         cpfCorrect = 1;
         int find = 0;
-        printf("| > CPF (Ex: 112345678900): ");
-        fgets(cpf, T_CPF, stdin);
-
-        cpf[strcspn(cpf, "\n")] = '\0'; // Remove o \n do final do cpf informado;
 
         if (strcmp(cpf, "admin") == 0) { // Verifica se o CPF é "admin"
             isAdmin = 1;
@@ -51,7 +51,8 @@ Value login(Conta contas[], int *pos, int *user){ // Função de Login
             }
         }
     }while(!cpfCorrect);
-    clearBuffer();
+    
+    // Solicitação de Senha:
     int passwordValidate = 0;
     int adminTrue = 0;
     int cpfPos;
@@ -61,8 +62,6 @@ Value login(Conta contas[], int *pos, int *user){ // Função de Login
         fgets(password, SENHA, stdin);
         password[strcspn(password, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if (!isAdmin) { // Se tentar entrar com Administrador, Verifica a senha com o de Admin
-            char* hash_cpf[SENHA];
-
             int compare = compareHash(password, contas[*user].senha);
 
             if(compare){

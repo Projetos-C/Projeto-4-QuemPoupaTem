@@ -5,8 +5,7 @@
 
 // >>> Funções ADM:
 // Relacionadas a controle de Clientes
-Value novo_cliente(Conta contas[], int *pos,
-                   int *user) { // Função de Criar um novo cliente
+Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar um novo cliente
   if (*pos >= TOTAL) {
     return MAX_CONTA;
   }
@@ -23,9 +22,9 @@ Value novo_cliente(Conta contas[], int *pos,
   do {
     cpfCorrect = 1;
     printf("| > CPF (Ex: 112345678900): ");
-    fgets(cpf, T_CPF, stdin);
-
-    cpf[strcspn(cpf, "\n")] = '\0'; // Remove o \n do final do cpf informado;
+    scanf("%s", cpf);
+    clearBuffer();
+    // Remove o \n do final do cpf informado;
     if (strlen(cpf) > 11 &&
         strlen(cpf) < 11) { // Verifica se o tamanho do cpf é válido
       cpfCorrect = 0;
@@ -119,37 +118,52 @@ Value novo_cliente(Conta contas[], int *pos,
     }
   } while (!senhaCorrect);
   strcpy(contas[*pos].senha, hash(senha));
-  *user = *pos;
+
+  if(*user == -2){
+    *user = *pos;
+  }
   *pos = *pos + 1;
 
   return OK;
 }
 
-Value deletar_cliente(Conta contas[], int *pos,
-                      int *user) { // Função de Deletar um cliente
-  char cpf_deletar[T_CPF];
-  printf("| > Número do CPF da conta a ser deletada: ");
-  fgets(cpf_deletar, T_CPF, stdin);
+Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Deletar um cliente
+    char cpf_deletar[T_CPF];
+    printf("| > Número do CPF da conta a ser deletada: ");
+    fgets(cpf_deletar, T_CPF, stdin);
+    cpf_deletar[strcspn(cpf_deletar, "\n")] = '\0';
 
-  cpf_deletar[strcspn(cpf_deletar, "\n")] = '\0';
+    int cliente_encontrado = 0; // Flag para indicar se o cliente foi encontrado
 
-  for (int i = 0; i < *pos; i++) {
-    int comparacao = strcmp(cpf_deletar, contas[i].cpf);
-    if (comparacao == 0) {
-      for (int j = i; j < *pos - 1; j++) {
-        strcpy(contas[j].nome, contas[j + 1].nome);
-        strcpy(contas[j].senha, contas[j + 1].senha);
-        contas[j].tipo_conta = contas[j + 1].tipo_conta;
-        contas[j].Saldo = contas[j + 1].Saldo;
-      }
-      printf("\033[32m| > Conta deletada com sucesso!!\n");
-      (*pos)--;
-    } else {
-      printf("| > Este número de CPF não existe em seu banco.\n");
+    for (int i = 0; i < *pos; i++) {
+        int comparacao = strcmp(cpf_deletar, contas[i].cpf);
+        if (comparacao == 0) {
+            // Move todos os clientes para cima na array para sobrescrever o cliente deletado
+            for (int j = i; j < *pos - 1; j++) {
+                strcpy(contas[j].cpf, contas[j + 1].cpf);
+                strcpy(contas[j].nome, contas[j + 1].nome);
+                strcpy(contas[j].senha, contas[j + 1].senha);
+                contas[j].tipo_conta = contas[j + 1].tipo_conta;
+                contas[j].Saldo = contas[j + 1].Saldo;
+                memcpy(contas[j].extrato, contas[j + 1].extrato, T_EXTRATO * sizeof(Extrato));
+            }
+            printf("\033[32m| > Conta deletada com sucesso!!\n");
+            (*pos)--;
+            cliente_encontrado = 1; // Cliente encontrado
+            break; // Saia do loop assim que o cliente for deletado
+        }
     }
-      return OK;
-  }
+
+    if (!cliente_encontrado) {
+        printf("| > Este número de CPF não existe em seu banco.\n");
+        return NAO_ENCONTRADO; // Retorna um código de erro
+    }
+
+    return OK;
 }
+
+
+
 Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Listar Clientes
   if (*pos == 0) {
     return SEM_CONTAS;
@@ -213,39 +227,6 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
 }
 
 Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
-    float valor_deposito;
-    char cpf_destino[T_CPF];
-    int i;
-    float saldo_novo;
-    Value validacao = login(contas, pos, user);
-    if (validacao == OK) {
-      printf("| > CPF de destino: ");
-      scanf("%s", &cpf_destino);
-      clearBuffer();
-      printf("| > Valor do depósito: ");
-      scanf("%f", &valor_deposito);
-      clearBuffer();
-      for (i = 0; i < *pos; i++) {
-        if (strcmp(cpf_destino, contas[i].cpf) == 0) {
-          saldo_novo = contas[*user].Saldo - valor_deposito;
-          if (contas[*user].tipo_conta == 1 && saldo_novo <= -1000) {
-            printf("\034[33m| > Saldo insuficiente.\n");
-          }
-          else if (contas[*user].tipo_conta == 2 && saldo_novo <= -5000) {
-            printf("\034[33m| > Saldo insuficiente.\n");
-          }
-          else {
-            contas[*user].Saldo = saldo_novo;
-            contas[i].Saldo += valor_deposito;
-            printf("\033[32m| > Depósito concluído com sucesso.\n");
-            printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
-          }
-        }
-      }
-    } else {
-        printf("\033[34m| > CPF não encontrado, tente novamente... ");
-    }
-    return OK;
 }
 
 Value extrato(Conta contas[], int *pos,
@@ -253,9 +234,72 @@ Value extrato(Conta contas[], int *pos,
   printf("extrado");
   return OK;
 }
-Value transacao(Conta contas[], int *pos,
-                int *user) { // Função de realizar transacao entre contas
-  printf("transacao");
+Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar transacao entre contas
+  float valor_deposito;
+  char cpf_origem[T_CPF];
+  char cpf_destino[T_CPF];
+  int i;
+  int posOrigem;
+  int posDest;
+  float saldo_novo;
+  int validacao = 0;
+  if(*user == -1){
+    do{
+      printf("| > CPF de Origem: ");
+      scanf("%s", cpf_origem);
+      clearBuffer();
+      posOrigem = findCPF(contas, *pos, cpf_origem);
+      if(posOrigem == -1){
+        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      }
+      else{
+        validacao = 1;
+      }
+    }while(!validacao);
+  }
+  else{
+    strcpy(cpf_origem, contas[*user].cpf);
+    posOrigem = *user;
+    validacao = 1;
+  }
+
+  int validacaoDestino = 0;
+  if (validacao) {
+
+    do{
+      printf("| > CPF de destino: ");
+      scanf("%s", cpf_destino);
+      clearBuffer();
+      cpf_destino[strcspn(cpf_destino, "\n")] = '\0'; // Remove o \n do final do cpf informado;
+      posDest = findCPF(contas, *pos, cpf_destino);
+      
+      if(posDest == -1){
+        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      }
+      else{
+        
+        printf("| > Valor do depósito: ");
+        scanf("%f", &valor_deposito);
+        clearBuffer();
+        
+        saldo_novo = contas[posOrigem].Saldo - valor_deposito;
+        if (contas[posOrigem].tipo_conta == 1 && saldo_novo <= -1000) {
+          printf("\034[33m| > Saldo insuficiente.\n");
+        }
+        else if (contas[posOrigem].tipo_conta == 2 && saldo_novo <= -5000) {
+          printf("\034[33m| > Saldo insuficiente.\n");
+        }
+        else {
+          contas[posOrigem].Saldo = saldo_novo;
+          contas[posDest].Saldo += valor_deposito;
+          printf("\033[32m| > Depósito concluído com sucesso.\n");
+          printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
+        }
+        validacaoDestino = 1;
+        
+      }
+    }while(!validacaoDestino);
+  }
   return OK;
 }
 
