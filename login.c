@@ -7,7 +7,7 @@
 #define ASCII_MAX 126
 #define ALPHABET_SIZE (ASCII_MAX - ASCII_MIN + 1)
 
-Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
+Value login(Conta contas[], int *pos, int *user){ // Função de Login
     int cpfCorrect = 1;
     int isAdmin = 0;
     int cont = 0;
@@ -51,15 +51,14 @@ Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
             }
         }
     }while(!cpfCorrect);
-    int passwordValidate = 0;
     clearBuffer();
+    int passwordValidate = 0;
     int adminTrue = 0;
     int cpfPos;
     char password[SENHA];
     do{
         printf("| > Senha: ");
         fgets(password, SENHA, stdin);
-        clearBuffer();
         password[strcspn(password, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if (!isAdmin) { // Se tentar entrar com Administrador, Verifica a senha com o de Admin
             char* hash_cpf[SENHA];

@@ -15,6 +15,7 @@ int main(){
     int user;
     int auth = 0; // Autenticação
     int entrada; // Váriavel recebe a resposta do menu de entrada
+    char cpf_digitado[T_CPF];
 
     Value carregar = arquivo[1](contas, &pos);
     tratarRes(carregar);

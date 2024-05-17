@@ -125,7 +125,8 @@ Value novo_cliente(Conta contas[], int *pos,
   return OK;
 }
 
-Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Deletar um cliente
+Value deletar_cliente(Conta contas[], int *pos,
+                      int *user) { // Função de Deletar um cliente
   char cpf_deletar[T_CPF];
   printf("| > Número do CPF da conta a ser deletada: ");
   fgets(cpf_deletar, T_CPF, stdin);
@@ -143,14 +144,13 @@ Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Dele
       }
       printf("\033[32m| > Conta deletada com sucesso!!\n");
       (*pos)--;
-      return OK;
     } else {
       printf("| > Este número de CPF não existe em seu banco.\n");
     }
+      return OK;
   }
 }
-Value listar_cliente(Conta contas[], int *pos,
-                     int *user) { // Função de Listar Clientes
+Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Listar Clientes
   if (*pos == 0) {
     return SEM_CONTAS;
   }
@@ -169,23 +169,85 @@ Value listar_cliente(Conta contas[], int *pos,
       break;
     }
     printf("| > Saldo: %f \n", contas[i].Saldo);
-    printf("|===============================\n");
   }
   return OK;
 }
 
 // Funções Bancárias
 // Operações com valores monetários
-Value debito(Conta contas[], int *pos,
-             int *user) { // Função de debitar dinheiro de uma conta
-  printf("debito");
+Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinheiro de uma conta
+    Value validacao = login(contas, pos, user);
+    if(validacao == OK) {
+        float valor;
+        int tipo_conta;
+        float saldo_novo;
+        printf("| > Valor a ser debitado: ");
+        scanf("%f", &valor);
+        clearBuffer();
+        tipo_conta = contas[*user].tipo_conta;
+        if (tipo_conta == 1) {
+          valor += (valor * 0.05);
+          saldo_novo = contas[*user].Saldo - valor;
+          if (saldo_novo <= -1000) {
+            printf("\033[33m| > Saldo insuficiente.");
+          } else {
+            contas[*user].Saldo = saldo_novo;
+            printf("\033[32m| > Débito realizado.\n");
+            printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+            } 
+          } 
+          else {
+            valor += (valor * 0.03);
+            saldo_novo = contas[*user].Saldo - valor;
+          if (saldo_novo <= -5000) {
+            printf("|> Saldo insuficiente.");
+          } else {
+            contas[*user].Saldo = saldo_novo;
+            printf("\033[32m| > Débito realizado.\n");
+            printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+        }
+      }
+    }
+    
   return OK;
 }
-Value deposito(Conta contas[], int *pos,
-               int *user) { // Função de depositar um valor em uma conta
-  printf("deposito");
-  return OK;
+
+Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
+    float valor_deposito;
+    char cpf_destino[T_CPF];
+    int i;
+    float saldo_novo;
+    Value validacao = login(contas, pos, user);
+    if (validacao == OK) {
+      printf("| > CPF de destino: ");
+      scanf("%s", &cpf_destino);
+      clearBuffer();
+      printf("| > Valor do depósito: ");
+      scanf("%f", &valor_deposito);
+      clearBuffer();
+      for (i = 0; i < *pos; i++) {
+        if (strcmp(cpf_destino, contas[i].cpf) == 0) {
+          saldo_novo = contas[*user].Saldo - valor_deposito;
+          if (contas[*user].tipo_conta == 1 && saldo_novo <= -1000) {
+            printf("\034[33m| > Saldo insuficiente.\n");
+          }
+          else if (contas[*user].tipo_conta == 2 && saldo_novo <= -5000) {
+            printf("\034[33m| > Saldo insuficiente.\n");
+          }
+          else {
+            contas[*user].Saldo = saldo_novo;
+            contas[i].Saldo += valor_deposito;
+            printf("\033[32m| > Depósito concluído com sucesso.\n");
+            printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
+          }
+        }
+      }
+    } else {
+        printf("\033[34m| > CPF não encontrado, tente novamente... ");
+    }
+    return OK;
 }
+
 Value extrato(Conta contas[], int *pos,
               int *user) { // Função de gerar extrato do cliente
   printf("extrado");
