@@ -182,7 +182,7 @@ Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Lista
     default:
       break;
     }
-    printf("| > Saldo: %f \n", contas[i].Saldo);
+    printf("| > Saldo: %.2f \n", contas[i].Saldo);
   }
   return OK;
 }
@@ -249,8 +249,40 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
 }
 
 Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
-  printf("dpo");
+  char cpf_origem[T_CPF];
+  int posicao;
+  int validacao = 0;
+  if(*user == -1){
+    do{
+      printf("| > CPF: ");
+      scanf("%s", cpf_origem);
+      clearBuffer();
+      posicao = findCPF(contas, *pos, cpf_origem);
+      if(posicao == -1){
+        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      }
+      else{
+        validacao = 1;
+      }
+    }while(!validacao);
+
+  }else{
+    posicao = *user;
+    validacao = 1;
+  }
+  if(validacao ) {
+      float valor;
+      float saldo_novo;
+      printf("| > Valor a ser depositado: ");
+      scanf("%f", &valor);
+      clearBuffer();
+      contas[posicao].Saldo += valor;
+      printf("\033[32m| > Deposito realizado.\n");
+      printf("\033[34m| > Saldo atual: %.3f\n", contas[posicao].Saldo);
+  } 
+  return OK;
 }
+
 
 Value extrato(Conta contas[], int *pos,int *user) { // Função de gerar extrato do cliente
   printf("extrado");
