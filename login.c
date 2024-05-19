@@ -143,3 +143,13 @@ int auth_senha(Conta contas[], int pos, int *user){
 
     return 1;
 }; 
+
+
+int findCPF(Conta contas[], int pos, const char *cpf) {
+  for (int i = 0; i < pos; i++) {
+    if (strcmp(cpf, contas[i].cpf) == 0) {
+      return i; // Retorna o índice da conta quando o CPF for encontrado
+    }
+  }
+  return -1; // Retorna -1 se o CPF não for encontrado
+}
