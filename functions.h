@@ -9,7 +9,7 @@ typedef char* SenhaType;
 
 typedef struct {
     int tipo; // 1 = Deposito / 2 = Débito / 3 = Transferência Receber / 4 = Trasnferência Pagar
-    int data;
+    time_t data;
     float valor;
 
 } Extrato;
@@ -21,9 +21,10 @@ typedef struct { // Estrutura das contas
     int tipo_conta; // 1 = Comum / 2 = Plus
     Extrato extrato[T_EXTRATO]; 
     float Saldo;
+    int extrato_size;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO } Value; // Tipoes de respostas em funções
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO, MAX_EXTRATO } Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
 typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais
@@ -55,7 +56,8 @@ int menu_user();       // Menu de Usuário Comum
 
 
 // Funções de Autenticação
-Value login(Conta contas[], int *pos, int *user); 
+Value login(Conta contas[], int *pos, int *user);       // Função de login dentro do banco
+int auth_senha(Conta contas[], int pos, int *user);  // Função auxiliar de confirmação da senha no código
 
 const char* hash(const char* senha); // Cria um hash da senha
 int compareHash(const char* senha, const char* hash_cpf);  // Verifica uma senha e um hash

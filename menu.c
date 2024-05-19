@@ -3,13 +3,8 @@
 #include <ctype.h>
 #include "functions.h"
 
-
-
-
-
 int menu_login(){
     int opcao;
-    
     do{
         printf("\n\033[34m");
         printf("|==================================|\n");

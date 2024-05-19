@@ -7,18 +7,18 @@
 #define ASCII_MAX 126
 #define ALPHABET_SIZE (ASCII_MAX - ASCII_MIN + 1)
 
-Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
+Value login(Conta contas[], int *pos, int *user){ // Função de Login
     int cpfCorrect = 1;
     int isAdmin = 0;
     int cont = 0;
     char cpf[T_CPF];
     do{
+        printf("| > CPF (Ex: 112345678900): ");
+        scanf("%s", cpf);
+        clearBuffer();
+
         cpfCorrect = 1;
         int find = 0;
-        printf("| > CPF (Ex: 112345678900): ");
-        fgets(cpf, T_CPF, stdin);
-
-        cpf[strcspn(cpf, "\n")] = '\0'; // Remove o \n do final do cpf informado;
 
         if (strcmp(cpf, "admin") == 0) { // Verifica se o CPF é "admin"
             isAdmin = 1;
@@ -51,19 +51,17 @@ Value login(Conta contas[], int *pos, int *user){ // Gunção de Login
             }
         }
     }while(!cpfCorrect);
+    
+    // Solicitação de Senha:
     int passwordValidate = 0;
-    clearBuffer();
     int adminTrue = 0;
     int cpfPos;
     char password[SENHA];
     do{
         printf("| > Senha: ");
         fgets(password, SENHA, stdin);
-        clearBuffer();
         password[strcspn(password, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if (!isAdmin) { // Se tentar entrar com Administrador, Verifica a senha com o de Admin
-            char* hash_cpf[SENHA];
-
             int compare = compareHash(password, contas[*user].senha);
 
             if(compare){
@@ -119,3 +117,29 @@ int compareHash(const char* senha, const char* hash_cpf) {
     int result = strcmp(hash_senha, hash_cpf);
     return result == 0;
 }
+
+int auth_senha(Conta contas[], int pos, int *user){
+    int passwordValidate = 0;
+    int cpfPos;
+    char password[SENHA];
+    do{
+        printf("| > Senha: ");
+        fgets(password, SENHA, stdin);
+        password[strcspn(password, "\n")] = '\0'; // Remove o \n do final da senha informada;
+
+            int compare = compareHash(password, contas[*user].senha);
+
+            if(compare){
+                passwordValidate = 1;
+            }
+            else{
+                printf("\033[34m| > Senha Inválida, tente novamente...\n");
+            }
+            /*
+            */
+
+        
+    }while(!passwordValidate);
+
+    return 1;
+}; 
