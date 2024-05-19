@@ -117,3 +117,29 @@ int compareHash(const char* senha, const char* hash_cpf) {
     int result = strcmp(hash_senha, hash_cpf);
     return result == 0;
 }
+
+int auth_senha(Conta contas[], int pos, int *user){
+    int passwordValidate = 0;
+    int cpfPos;
+    char password[SENHA];
+    do{
+        printf("| > Senha: ");
+        fgets(password, SENHA, stdin);
+        password[strcspn(password, "\n")] = '\0'; // Remove o \n do final da senha informada;
+
+            int compare = compareHash(password, contas[*user].senha);
+
+            if(compare){
+                passwordValidate = 1;
+            }
+            else{
+                printf("\033[34m| > Senha Inválida, tente novamente...\n");
+            }
+            /*
+            */
+
+        
+    }while(!passwordValidate);
+
+    return 1;
+}; 

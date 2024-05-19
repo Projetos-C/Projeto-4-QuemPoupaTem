@@ -55,7 +55,8 @@ int menu_user();       // Menu de Usuário Comum
 
 
 // Funções de Autenticação
-Value login(Conta contas[], int *pos, int *user); 
+Value login(Conta contas[], int *pos, int *user);       // Função de login dentro do banco
+int auth_senha(Conta contas[], int pos, int *user);  // Função auxiliar de confirmação da senha no código
 
 const char* hash(const char* senha); // Cria um hash da senha
 int compareHash(const char* senha, const char* hash_cpf);  // Verifica uma senha e um hash

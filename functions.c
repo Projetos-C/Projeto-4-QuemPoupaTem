@@ -214,9 +214,13 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
   }
 
   if(validacao ) {
+      int Senha_Correta;
       float valor;
       int tipo_conta;
       float saldo_novo;
+      do{
+        Senha_Correta = auth_senha(contas, *pos, &posicao);
+      }while(!Senha_Correta);
       printf("| > Valor a ser debitado: ");
       scanf("%f", &valor);
       clearBuffer();
@@ -271,8 +275,12 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
     validacao = 1;
   }
   if(validacao ) {
+      int Senha_Correta;
       float valor;
       float saldo_novo;
+            do{
+        Senha_Correta = auth_senha(contas, *pos, &posicao);
+      }while(!Senha_Correta);
       printf("| > Valor a ser depositado: ");
       scanf("%f", &valor);
       clearBuffer();
