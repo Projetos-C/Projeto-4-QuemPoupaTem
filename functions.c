@@ -327,7 +327,7 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
 
   int validacaoDestino = 0;
   if (validacao) {
-
+      int Senha_Correta;
     do{
       printf("| > CPF de destino: ");
       scanf("%s", cpf_destino);
@@ -339,6 +339,9 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
       else{
+        do{
+        Senha_Correta = auth_senha(contas, *pos, &posOrigem);
+        }while(!Senha_Correta);
         
         printf("| > Valor do depósito: ");
         scanf("%f", &valor_deposito);
