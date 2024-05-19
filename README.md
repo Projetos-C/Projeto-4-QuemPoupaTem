@@ -25,8 +25,8 @@ Atualmente, o programa possui um administrador único com credenciais específic
 1. Executar o Programa: Inicie o programa compilado.
 2. Selecionar Função de Login: Escolha a opção de login no menu.
 3. Inserir Credenciais: <br> <br>
-**Login:** Digite Admin ou admin. <br>
-**Senha:** Digite Admin24. <br><br>
+**Login:** Admin ou admin. <br>
+**Senha:** Admin24. <br><br>
 
 Após inserir essas credenciais, você estará logado como administrador e terá acesso a todas as funcionalidades do programa.
 
