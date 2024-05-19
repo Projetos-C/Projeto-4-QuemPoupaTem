@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 // >>> Funções ADM:
 // Relacionadas a controle de Clientes
@@ -476,4 +477,22 @@ int findCPF(Conta contas[], int pos, const char *cpf) {
     }
   }
   return -1; // Retorna -1 se o CPF não for encontrado
+}
+
+Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
+  if (contas[*user].extrato_size >= T_EXTRATO) { // Verifica o limite do Extrato
+      return MAX_EXTRATO;
+  }
+
+  time_t data = time(NULL); // Salva a data de agora
+
+  Extrato nova_operacao; // Cria uma operação com os valores recebidos
+  nova_operacao.tipo = tipo;
+  nova_operacao.valor = valor;
+  nova_operacao.data = data;
+  
+  // Adiciona a nova operação ao extrato
+  contas[*user].extrato[contas[*user].extrato_size] = nova_operacao;
+  contas[*user].extrato_size++;
+  return OK;
 }
