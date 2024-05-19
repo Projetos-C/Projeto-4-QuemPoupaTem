@@ -371,7 +371,35 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
 
 // Funções auxiliares:
 // Suporte
-void tratarRes(Value err){}; // Tratamento de Erros das funções de tipo Value
+void tratarRes(Value err){
+    if (err == MAX_CONTAS) {
+        printf("\033[31m| ERRO - Máximo de contas atingido.\n");
+    } else if (err == CRIAR) {
+        printf("\033[31m| ERRO - Não foi possível criar o arquivo.\n");
+    } else if (err == SEM_CONTAS) {
+        printf("\033[31m| ERRO - Não existem contas salvas.\n");
+    } else if (err == ABRIR) {
+        printf("\033[31m| ERRO - Não foi possível abrir o arquivo.\n");
+    } else if (err == FECHAR) {
+        printf("\033[31m| ERRO - Não foi possível fechar o arquivo.\n");
+    } else if (err == ESCREVER) {
+        printf("\033[31m| ERRO - Não foi possível escrever em seu arquivo.\n");
+    } else if (err == LER) {
+        printf("\033[31m| ERRO - Não foi possível ler o seu arquivo.\n");
+      else if (err == AUTENTICACAO) {
+        printf("\033[31m| ERRO - Não foi possível autenticar os seus dados.\n");
+      else if (err == ACESSO_INVALIDO) {
+        printf("\033[31m| ERRO - Não foi possível validar o seu acesso.\n");
+      else if (err == MAX_EXTRATO) {
+        printf("\033[31m| ERRO - Tamanho do extrato excedido.\n");
+    } else if (err == OK) {
+        // Fazer nada em caso de sucesso 
+    } 
+    else{
+        printf("\033[31m| ERRO - Erro de Sistema Desconhecido.\n");
+    }
+    
+}
 
 void clearBuffer() { // Função de Limpeza de Buffer
   int c;
@@ -496,3 +524,4 @@ Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
   contas[*user].extrato_size++;
   return OK;
 }
+
