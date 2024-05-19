@@ -480,10 +480,6 @@ int findCPF(Conta contas[], int pos, const char *cpf) {
 }
 
 Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
-  if (contas[*user].extrato_size >= T_EXTRATO) { // Verifica o limite do Extrato
-      return MAX_EXTRATO;
-  }
-
   time_t data = time(NULL); // Salva a data de agora
 
   Extrato nova_operacao; // Cria uma operação com os valores recebidos
@@ -495,4 +491,17 @@ Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
   contas[*user].extrato[contas[*user].extrato_size] = nova_operacao;
   contas[*user].extrato_size++;
   return OK;
+}
+
+
+Value mover_extrato(Conta contas[], int *user) {
+    if (contas[*user].extrato_size >= T_EXTRATO) {
+        // Remover o primeiro extrato e mover todos os outros uma posição para cima
+        for (int i = 1; i < contas[*user].extrato_size; i++) {
+            contas[*user].extrato[i - 1] = contas[*user].extrato[i];
+        }
+        // Decrementar o tamanho do extrato
+        contas[*user].extrato_size--;
+    }
+    return OK;
 }
