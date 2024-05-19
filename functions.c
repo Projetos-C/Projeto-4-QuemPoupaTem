@@ -386,11 +386,11 @@ void tratarRes(Value err){
         printf("\033[31m| ERRO - Não foi possível escrever em seu arquivo.\n");
     } else if (err == LER) {
         printf("\033[31m| ERRO - Não foi possível ler o seu arquivo.\n");
-      else if (err == AUTENTICACAO) {
-        printf("\033[31m| ERRO - Não foi possível autenticar os seus dados.\n");
-      else if (err == ACESSO_INVALIDO) {
+    }  else if (err == SEM_EXTRATO) {
+        printf("\033[31m| ERRO - Lista de extratos está vazia.\n");
+    } else if (err == ACESSO_INVALIDO) {
         printf("\033[31m| ERRO - Não foi possível validar o seu acesso.\n");
-      else if (err == MAX_EXTRATO) {
+    }  else if (err == MAX_EXTRATO) {
         printf("\033[31m| ERRO - Tamanho do extrato excedido.\n");
     } else if (err == OK) {
         // Fazer nada em caso de sucesso 

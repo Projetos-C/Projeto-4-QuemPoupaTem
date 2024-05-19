@@ -24,7 +24,7 @@ typedef struct { // Estrutura das contas
     int extrato_size;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO, MAX_EXTRATO } Value; // Tipoes de respostas em funções
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, SEM_EXTRATO, ACESSO_INVALIDO, NAO_ENCONTRADO, MAX_EXTRATO } Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
 typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais
