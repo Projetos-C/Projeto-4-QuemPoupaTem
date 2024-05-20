@@ -1,8 +1,5 @@
 #include "functions.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+
 #define ASCII_MIN 33
 #define ASCII_MAX 126
 #define ALPHABET_SIZE (ASCII_MAX - ASCII_MIN + 1)

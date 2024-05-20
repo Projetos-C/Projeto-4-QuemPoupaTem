@@ -1,8 +1,4 @@
 #include "functions.h"
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
 
 // >>> Funções ADM:
 // Relacionadas a controle de Clientes
@@ -163,8 +159,6 @@ Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Dele
     return OK;
 }
 
-
-
 Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Listar Clientes
   if (*pos == 0) {
     return SEM_CONTAS;
@@ -187,6 +181,14 @@ Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Lista
   }
   return OK;
 }
+
+
+
+
+
+
+
+
 
 // Funções Bancárias
 // Operações com valores monetários
@@ -214,10 +216,11 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
     validacao = 1;
   }
 
+  float valor;
   if(validacao ) {
       int Senha_Correta;
-      float valor;
       int tipo_conta;
+      float valor_taxa;
       float saldo_novo;
       do{
         Senha_Correta = auth_senha(contas, *pos, &posicao);
@@ -227,8 +230,8 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
       clearBuffer();
       tipo_conta = contas[posicao].tipo_conta;
       if (tipo_conta == 1) {
-        valor += (valor * 0.05);
-        saldo_novo = contas[posicao].Saldo - valor;
+        valor_taxa = valor * 0.05;
+        saldo_novo = contas[posicao].Saldo - valor_taxa;
         if (saldo_novo <= -1000) {
           printf("\033[33m| > Saldo insuficiente.");
         } else {
@@ -238,8 +241,8 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
           } 
         } 
         else {
-          valor += (valor * 0.03);
-          saldo_novo = contas[posicao].Saldo - valor;
+        valor_taxa = valor * 0.03;
+        saldo_novo = contas[posicao].Saldo - valor_taxa;
         if (saldo_novo <= -5000) {
           printf("|> Saldo insuficiente.");
         } else {
@@ -249,8 +252,10 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
       }
     }
   }
-  
+
+  saveExtrato(contas, &*user, 2, valor);
   return OK;
+
 }
 
 Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
@@ -275,9 +280,9 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
     posicao = *user;
     validacao = 1;
   }
+  float valor;
   if(validacao ) {
       int Senha_Correta;
-      float valor;
       float saldo_novo;
             do{
         Senha_Correta = auth_senha(contas, *pos, &posicao);
@@ -289,17 +294,14 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
       printf("\033[32m| > Deposito realizado.\n");
       printf("\033[34m| > Saldo atual: %.3f\n", contas[posicao].Saldo);
   } 
-  return OK;
-}
+  saveExtrato(contas, &*user, 1, valor);
 
-Value extrato(Conta contas[], int *pos,int *user) { // Função de gerar extrato do cliente
-  printf("extrado");
   return OK;
-}
 
+}
 
 Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar transacao entre contas
-  float valor_deposito;
+  float valor;
   char cpf_origem[T_CPF];
   char cpf_destino[T_CPF];
   int i;
@@ -346,10 +348,10 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
         }while(!Senha_Correta);
         
         printf("| > Valor do depósito: ");
-        scanf("%f", &valor_deposito);
+        scanf("%f", &valor);
         clearBuffer();
         
-        saldo_novo = contas[posOrigem].Saldo - valor_deposito;
+        saldo_novo = contas[posOrigem].Saldo - valor;
         if (contas[posOrigem].tipo_conta == 1 && saldo_novo <= -1000) {
           printf("\034[33m| > Saldo insuficiente.\n");
         }
@@ -358,7 +360,7 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
         }
         else {
           contas[posOrigem].Saldo = saldo_novo;
-          contas[posDest].Saldo += valor_deposito;
+          contas[posDest].Saldo += valor;
           printf("\033[32m| > Depósito concluído com sucesso.\n");
           printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
         }
@@ -366,9 +368,95 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
         
       }
     }while(!validacaoDestino);
-  }
+  } 
+  saveExtrato(contas, &posOrigem, 4, valor);
+  saveExtrato(contas, &posDest, 3, valor);
   return OK;
 }
+
+Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrato do cliente
+  if (*pos == 0) {
+    return SEM_CONTAS;
+  }
+
+  char cpf_origem[T_CPF];
+  int posicao;
+  float saldo_novo;
+  int validacao = 0;
+  if(*user == -1){
+    do{
+      printf("| > CPF: ");
+      scanf("%s", cpf_origem);
+      clearBuffer();
+      posicao = findCPF(contas, *pos, cpf_origem);
+      if(posicao == -1){
+        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      }
+      else{
+        validacao = 1;
+      }
+    }while(!validacao);
+  }
+  else{
+    posicao = *user;
+  }
+  
+
+  if(contas[posicao].extrato_size == 0){
+    return SEM_EXTRATO;
+  }
+
+
+  Extrato* extrato = contas[posicao].extrato;
+  int size = contas[posicao].extrato_size;
+  char* tipo;
+  for (int i = 0; i < size; i++) {
+    printf("|===============================\n");
+    const char* tipo_operacao;
+    switch (extrato[i].tipo) {
+      case 1: tipo_operacao = "Deposito"; break;
+      case 2: tipo_operacao = "Débito"; break;
+      case 3: tipo_operacao = "Transferência Recebida"; break;
+      case 4: tipo_operacao = "Transferência Paga"; break;
+      default: tipo_operacao = "Desconhecido"; break;
+    }
+
+    printf("| > Operação: %s\n", tipo_operacao);
+
+    printf("| > Valor: R$%.2f  \n", extrato[i].valor);
+
+    if(extrato[i].tipo == 2){
+      if(contas[posicao].tipo_conta == 1){
+        printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.05);
+      }
+      else{
+        printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.03);
+      }
+    }
+    else{
+      printf("| > Tarifa: R$0,00\n");
+    }
+    
+    struct tm* tm_info;
+    char buffer[26];
+    tm_info = localtime(&extrato[i].data);
+    strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+    
+  }
+  char opc;
+  printf("| > Deseja Salvar Extrato em um Arquivo? (y/n) ");
+  scanf("%c", &opc);
+  if(opc == 'y'){
+    char fileName[100];
+    printf("| > Nome do Arquivo: ");
+    scanf("%99s", fileName);  
+    gerar_arquivo_texto(contas, posicao, fileName);
+  }
+
+  return OK;
+
+}
+
 
 // Funções auxiliares:
 // Suporte
@@ -380,18 +468,11 @@ void clearBuffer() { // Função de Limpeza de Buffer
     ;
 };
 
-int findCPF(Conta contas[], int pos, const char *cpf) {
-  for (int i = 0; i < pos; i++) {
-    if (strcmp(cpf, contas[i].cpf) == 0) {
-      return i; // Retorna o índice da conta quando o CPF for encontrado
-    }
-  }
-  return -1; // Retorna -1 se o CPF não for encontrado
-}
-
 Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
   time_t data = time(NULL); // Salva a data de agora
-
+  
+  mover_extrato(contas, &*user); // Verifica se precisa mover o extrato
+  
   Extrato nova_operacao; // Cria uma operação com os valores recebidos
   nova_operacao.tipo = tipo;
   nova_operacao.valor = valor;
@@ -415,3 +496,5 @@ Value mover_extrato(Conta contas[], int *user) {
     }
     return OK;
 }
+
+
