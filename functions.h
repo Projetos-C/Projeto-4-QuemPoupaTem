@@ -30,6 +30,7 @@ typedef struct { // Estrutura das contas
     int extrato_size;
 } Conta;
 
+
 typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTAS, SEM_CONTAS, SEM_EXTRATOS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO} Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu

@@ -237,7 +237,7 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
           } 
         } 
         else {
@@ -248,7 +248,7 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
       }
     }
   }
@@ -292,7 +292,7 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
       clearBuffer();
       contas[posicao].Saldo += valor;
       printf("\033[32m| > Deposito realizado.\n");
-      printf("\033[34m| > Saldo atual: %.3f\n", contas[posicao].Saldo);
+      printf("\033[34m| > Saldo atual: R$ %.2f\n", contas[posicao].Saldo);
   } 
   saveExtrato(contas, &*user, 1, valor);
 
@@ -362,7 +362,7 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
           contas[pos_origem].Saldo = saldo_novo;
           contas[pos_dest].Saldo += valor;
           printf("\033[32m| > Depósito concluído com sucesso.\n");
-          printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
         }
         validacaoDestino = 1;
         
@@ -417,11 +417,11 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
     printf("|===============================\n");
     const char* tipo_operacao;
     switch (extrato[i].tipo) {
-      case 1: tipo_operacao = "Deposito"; break;
-      case 2: tipo_operacao = "Débito"; break;
+      case 1: tipo_operacao = "Deposito              "; break;
+      case 2: tipo_operacao = "Débito                "; break;
       case 3: tipo_operacao = "Transferência Recebida"; break;
-      case 4: tipo_operacao = "Transferência Paga"; break;
-      default: tipo_operacao = "Desconhecido"; break;
+      case 4: tipo_operacao = "Transferência Paga    "; break;
+      default: tipo_operacao = "Desconhecido         "; break;
     }
 
     printf("| > Operação: %s\n", tipo_operacao);
@@ -431,13 +431,16 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
     if(extrato[i].tipo == 2){
       if(contas[posicao].tipo_conta == 1){
         printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.05);
+        printf("|===============================\n");
       }
       else{
         printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.03);
+        printf("|===============================\n");
       }
     }
     else{
       printf("| > Tarifa: R$0,00\n");
+      printf("|===============================\n");
     }
     
     struct tm* tm_info;
@@ -463,6 +466,7 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
 
 // Funções auxiliares:
 // Suporte
+
 void clearBuffer() { // Função de Limpeza de Buffer
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
