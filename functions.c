@@ -4,7 +4,7 @@
 // Relacionadas a controle de Clientes
 Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar um novo cliente
   if (*pos >= TOTAL) {
-    return MAX_CONTA;
+    return MAX_CONTAS;
   }
   if (*user != -1 && *user != -2) {
     return ACESSO_INVALIDO;
@@ -237,7 +237,7 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
           } 
         } 
         else {
@@ -248,7 +248,7 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
       }
     }
   }
@@ -292,7 +292,7 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
       clearBuffer();
       contas[posicao].Saldo += valor;
       printf("\033[32m| > Deposito realizado.\n");
-      printf("\033[34m| > Saldo atual: %.3f\n", contas[posicao].Saldo);
+      printf("\033[34m| > Saldo atual: R$ %.2f\n", contas[posicao].Saldo);
   } 
   saveExtrato(contas, &*user, 1, valor);
 
@@ -362,7 +362,7 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
           contas[posOrigem].Saldo = saldo_novo;
           contas[posDest].Saldo += valor;
           printf("\033[32m| > Depósito concluído com sucesso.\n");
-          printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
         }
         validacaoDestino = 1;
         
@@ -414,11 +414,11 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
     printf("|===============================\n");
     const char* tipo_operacao;
     switch (extrato[i].tipo) {
-      case 1: tipo_operacao = "Deposito"; break;
-      case 2: tipo_operacao = "Débito"; break;
+      case 1: tipo_operacao = "Deposito              "; break;
+      case 2: tipo_operacao = "Débito                "; break;
       case 3: tipo_operacao = "Transferência Recebida"; break;
-      case 4: tipo_operacao = "Transferência Paga"; break;
-      default: tipo_operacao = "Desconhecido"; break;
+      case 4: tipo_operacao = "Transferência Paga    "; break;
+      default: tipo_operacao = "Desconhecido         "; break;
     }
 
     printf("| > Operação: %s\n", tipo_operacao);
@@ -428,13 +428,16 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
     if(extrato[i].tipo == 2){
       if(contas[posicao].tipo_conta == 1){
         printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.05);
+        printf("|===============================\n");
       }
       else{
         printf("| > Tarifa: R$%.2f\n", extrato[i].valor * 0.03);
+        printf("|===============================\n");
       }
     }
     else{
       printf("| > Tarifa: R$0,00\n");
+      printf("|===============================\n");
     }
     
     struct tm* tm_info;
@@ -460,7 +463,35 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
 
 // Funções auxiliares:
 // Suporte
-void tratarRes(Value err){}; // Tratamento de Erros das funções de tipo Value
+void tratarRes(Value err){ // Tratamento de Erros das funções de tipo Value
+    if (err == MAX_CONTAS) {
+        printf("\033[31m| ERRO - Máximo de contas atingido.\n");
+    } else if (err == CRIAR) {
+        printf("\033[31m| ERRO - Não foi possível criar o arquivo.\n");
+    } else if (err == SEM_CONTAS) {
+        printf("\033[31m| ERRO - Não existem contas salvas.\n");
+    } else if (err == ABRIR) {
+        printf("\033[31m| ERRO - Não foi possível abrir o arquivo.\n");
+    } else if (err == FECHAR) {
+        printf("\033[31m| ERRO - Não foi possível fechar o arquivo.\n");
+    } else if (err == ESCREVER) {
+        printf("\033[31m| ERRO - Não foi possível escrever em seu arquivo.\n");
+    } else if (err == LER) {
+        printf("\033[31m| ERRO - Não foi possível ler o seu arquivo.\n");
+    }  else if (err == SEM_EXTRATO) {
+        printf("\033[31m| ERRO - Lista de extratos está vazia.\n");
+    } else if (err == ACESSO_INVALIDO) {
+        printf("\033[31m| ERRO - Não foi possível validar o seu acesso.\n");
+    }  else if (err == MAX_EXTRATO) {
+        printf("\033[31m| ERRO - Tamanho do extrato excedido.\n");
+    } else if (err == OK) {
+        // Fazer nada em caso de sucesso 
+    } 
+    else{
+        printf("\033[31m| ERRO - Erro de Sistema Desconhecido.\n");
+    }
+    
+} 
 
 void clearBuffer() { // Função de Limpeza de Buffer
   int c;

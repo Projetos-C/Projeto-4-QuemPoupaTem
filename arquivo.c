@@ -111,8 +111,8 @@ Value gerar_arquivo_texto(Conta contas[], int user, const char *nome_arquivo) {
     fprintf(f, "Extratos da conta de %s (%s)\n", contas[user].nome, contas[user].cpf);
     fprintf(f, "Tipo de conta: %s\n", contas[user].tipo_conta == 'c' ? "Comum" : "Plus");
     fprintf(f, "Saldo atual: %.2f\n", contas[user].Saldo);
-    fprintf(f, "\n| Data\t\t\t\t  | Tipo\t\t\t\t| Valor\t\t| Taxa\t\t|\n");
-    fprintf(f, "-------------------------------------------------------------\n");
+    fprintf(f, "\n| Data\t\t\t\t\t| Tipo\t\t\t\t\t\t| Valor\t\t| Taxa\t|\n");
+    fprintf(f, "-------------------------------------------------------------------------\n");
 
     for (int i = 0; i < contas[user].extrato_size; i++) {
         char buffer[26];
@@ -122,11 +122,11 @@ Value gerar_arquivo_texto(Conta contas[], int user, const char *nome_arquivo) {
 
         const char* tipo_operacao;
         switch (contas[user].extrato[i].tipo) {
-            case 1: tipo_operacao = "Deposito"; break;
-            case 2: tipo_operacao = "Débito"; break;
+            case 1: tipo_operacao = "Deposito              "; break;
+            case 2: tipo_operacao = "Débito                "; break;
             case 3: tipo_operacao = "Transferência Recebida"; break;
-            case 4: tipo_operacao = "Transferência Paga"; break;
-            default: tipo_operacao = "Desconhecido"; break;
+            case 4: tipo_operacao = "Transferência Paga    "; break;
+            default: tipo_operacao = "Desconhecido         "; break;
         }
 
         float valor_operacao = contas[user].extrato[i].valor;
