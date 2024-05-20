@@ -1,3 +1,10 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdbool.h>
+
 #define TOTAL 1000
 #define T_NOME 100
 #define T_CPF 12 
@@ -24,18 +31,16 @@ typedef struct { // Estrutura das contas
     int extrato_size;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO, MAX_EXTRATO } Value; // Tipoes de respostas em funções
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTA, SEM_CONTAS, SEM_EXTRATO, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO} Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
 typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais
 typedef Value (*arc)(Conta[], int*); // Forma simplificada de chamar funções relacionada ao tratamento de arquivos
 
-
 // Clientes 
 Value novo_cliente(Conta contas[], int *pos, int *user);    // Função de Criar um novo cliente
 Value deletar_cliente(Conta contas[], int *pos, int *user); // Função de Deletar um cliente
 Value listar_cliente(Conta contas[], int *pos, int *user);  // Função de Listar os clientes
-
 
 // Operações Bancárias
 Value debito(Conta contas[], int *pos, int *user);          // Função de debitar dinheiro de uma conta
@@ -43,10 +48,16 @@ Value deposito(Conta contas[], int *pos, int *user);        // Função de depos
 Value extrato(Conta contas[], int *pos, int *user);         // Função de gerar extrato do cliente
 Value transacao(Conta contas[], int *pos, int *user);       // Função de realizar transacao entre contas
 
-
 // Arquivo
 Value salvar(Conta contas[], int *pos);                     // Função de Salvar a lista de contatos no arquivo binário
 Value carregar(Conta contas[], int *pos);                   // Função de Carregar a lista de contatos do arquivo binário
+Value gerar_arquivo_texto(Conta contas[], int user, const char *nome_arquivo);
+Value carregar_extrato(Conta contas[], int *total_contas);
+
+// Extrato
+Value saveExtrato(Conta contas[], int *user, int tipo, float valor);
+Value mover_extrato(Conta contas[], int *user);
+
 
 
 // Menus 

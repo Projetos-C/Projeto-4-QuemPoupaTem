@@ -1,8 +1,5 @@
 #include "functions.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+
 #define ASCII_MIN 33
 #define ASCII_MAX 126
 #define ALPHABET_SIZE (ASCII_MAX - ASCII_MIN + 1)
@@ -143,3 +140,13 @@ int auth_senha(Conta contas[], int pos, int *user){
 
     return 1;
 }; 
+
+
+int findCPF(Conta contas[], int pos, const char *cpf) {
+  for (int i = 0; i < pos; i++) {
+    if (strcmp(cpf, contas[i].cpf) == 0) {
+      return i; // Retorna o índice da conta quando o CPF for encontrado
+    }
+  }
+  return -1; // Retorna -1 se o CPF não for encontrado
+}
