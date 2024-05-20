@@ -1,25 +1,22 @@
 #include "functions.h"
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
 
 // >>> Funções ADM:
 // Relacionadas a controle de Clientes
 Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar um novo cliente
   if (*pos >= TOTAL) {
-    return MAX_CONTA;
+    return MAX_CONTAS;
   }
   if (*user != -1 && *user != -2) {
     return ACESSO_INVALIDO;
   }
+
   printf("| > Nome do Usuario: ");
   fgets(contas[*pos].nome, T_NOME, stdin);
   contas[*pos].nome[strcspn(contas[*pos].nome, "\n")] = '\0';
-
   int cpfCorrect = 1;
   int cont = 0;
   char cpf[T_CPF];
+
   do {
     cpfCorrect = 1;
     printf("| > CPF (Ex: 112345678900): ");
@@ -46,6 +43,7 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
       cpf[0] = '\0';
     }
   } while (!cpfCorrect);
+
   strcpy(contas[*pos].cpf, cpf);
   contas[*pos].cpf[strcspn(contas[*pos].cpf, "\n")] = '\0';
 
@@ -75,11 +73,11 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
     } else {
       printf("\033[31m| > Tipo de conta invalido, Tente novamente...\n");
     }
+
   } while (!isValidType);
 
   float saldo;
-  int isValid =
-      0; // Inicialize isValid como 0 para que o loop execute pelo menos uma vez
+  int isValid = 0; // Inicialize isValid como 0 para que o loop execute pelo menos uma vez
 
   do {
     printf("\033[34m| > Informe o saldo da conta: ");
@@ -97,10 +95,12 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
       printf("\033[31m| > Entrada invalida, Tente novamente...\n");
       clearBuffer();
     }
+
   } while (!isValid); // Repita o loop enquanto isValid for 0 (saldo inválido)
 
   int senhaCorrect;
   char senha[SENHA];
+
   do {
     senhaCorrect = 1;
     printf("| > Digite sua senha: ");
@@ -117,7 +117,9 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
              "novamente...\n");
       senhaCorrect = 0; // Define senhaCorrect como 0 para repetir o loop
     }
+
   } while (!senhaCorrect);
+
   strcpy(contas[*pos].senha, hash(senha));
 
   if(*user == -2){
@@ -133,7 +135,6 @@ Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Dele
     printf("| > Número do CPF da conta a ser deletada: ");
     fgets(cpf_deletar, T_CPF, stdin);
     cpf_deletar[strcspn(cpf_deletar, "\n")] = '\0';
-
     int cliente_encontrado = 0; // Flag para indicar se o cliente foi encontrado
 
     for (int i = 0; i < *pos; i++) {
@@ -164,8 +165,8 @@ Value deletar_cliente(Conta contas[], int *pos, int *user) { // Função de Dele
 }
 
 
-
 Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Listar Clientes
+
   if (*pos == 0) {
     return SEM_CONTAS;
   }
@@ -183,7 +184,7 @@ Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Lista
     default:
       break;
     }
-    printf("| > Saldo: %.2f \n", contas[i].Saldo);
+    printf("| > Saldo: R$ %.2f \n", contas[i].Saldo);
   }
   return OK;
 }
@@ -195,37 +196,42 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
   int posicao;
   float saldo_novo;
   int validacao = 0;
-  if(*user == -1){
+
+  if(*user == -1) {
     do{
       printf("| > CPF: ");
       scanf("%s", cpf_origem);
       clearBuffer();
       posicao = findCPF(contas, *pos, cpf_origem);
-      if(posicao == -1){
+      if(posicao == -1) {
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
-      else{
+      else {
         validacao = 1;
       }
-    }while(!validacao);
 
-  }else{
+    } while(!validacao);
+
+  } else {
     posicao = *user;
     validacao = 1;
   }
 
-  if(validacao ) {
+  if(validacao) {
       int Senha_Correta;
       float valor;
       int tipo_conta;
       float saldo_novo;
-      do{
+
+      do {
         Senha_Correta = auth_senha(contas, *pos, &posicao);
-      }while(!Senha_Correta);
+      } while(!Senha_Correta);
+
       printf("| > Valor a ser debitado: ");
       scanf("%f", &valor);
       clearBuffer();
       tipo_conta = contas[posicao].tipo_conta;
+
       if (tipo_conta == 1) {
         valor += (valor * 0.05);
         saldo_novo = contas[posicao].Saldo - valor;
@@ -234,18 +240,21 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
-          } 
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
+
         } 
-        else {
+      } 
+      else {
           valor += (valor * 0.03);
           saldo_novo = contas[posicao].Saldo - valor;
+
         if (saldo_novo <= -5000) {
           printf("|> Saldo insuficiente.");
+
         } else {
           contas[posicao].Saldo = saldo_novo;
           printf("\033[32m| > Débito realizado.\n");
-          printf("\033[34m| > Saldo atual: %.3f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
       }
     }
   }
@@ -253,41 +262,45 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
   return OK;
 }
 
-Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de transferencia!!!!!!
+Value deposito(Conta contas[], int *pos, int *user) { 
   char cpf_origem[T_CPF];
   int posicao;
   int validacao = 0;
+
   if(*user == -1){
     do{
       printf("| > CPF: ");
       scanf("%s", cpf_origem);
       clearBuffer();
       posicao = findCPF(contas, *pos, cpf_origem);
-      if(posicao == -1){
+
+      if(posicao == -1) {
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
-      else{
+      else {
         validacao = 1;
       }
-    }while(!validacao);
+    } while(!validacao);
 
-  }else{
+  } else {
     posicao = *user;
     validacao = 1;
   }
-  if(validacao ) {
+  if(validacao) {
       int Senha_Correta;
       float valor;
       float saldo_novo;
-            do{
+
+      do {
         Senha_Correta = auth_senha(contas, *pos, &posicao);
-      }while(!Senha_Correta);
+      } while(!Senha_Correta);
+
       printf("| > Valor a ser depositado: ");
       scanf("%f", &valor);
       clearBuffer();
       contas[posicao].Saldo += valor;
       printf("\033[32m| > Deposito realizado.\n");
-      printf("\033[34m| > Saldo atual: %.3f\n", contas[posicao].Saldo);
+      printf("\033[34m| > Saldo atual: R$ %.2f\n", contas[posicao].Saldo);
   } 
   return OK;
 }
@@ -297,6 +310,8 @@ Value extrato(Conta contas[], int *pos,int *user) { // Função de gerar extrato
   printf("extrado");
   return OK;
 }
+
+
 Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar transacao entre contas
   float valor_deposito;
   char cpf_origem[T_CPF];
@@ -306,21 +321,23 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
   int posDest;
   float saldo_novo;
   int validacao = 0;
-  if(*user == -1){
-    do{
+
+  if(*user == -1) {
+    do {
       printf("| > CPF de Origem: ");
       scanf("%s", cpf_origem);
       clearBuffer();
       posOrigem = findCPF(contas, *pos, cpf_origem);
-      if(posOrigem == -1){
+
+      if(posOrigem == -1) {
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
       else{
         validacao = 1;
       }
-    }while(!validacao);
+    } while(!validacao);
   }
-  else{
+  else {
     strcpy(cpf_origem, contas[*user].cpf);
     posOrigem = *user;
     validacao = 1;
@@ -329,49 +346,53 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
   int validacaoDestino = 0;
   if (validacao) {
       int Senha_Correta;
-    do{
+    do {
       printf("| > CPF de destino: ");
       scanf("%s", cpf_destino);
       clearBuffer();
       cpf_destino[strcspn(cpf_destino, "\n")] = '\0'; // Remove o \n do final do cpf informado;
       posDest = findCPF(contas, *pos, cpf_destino);
       
-      if(posDest == -1){
+      if(posDest == -1) {
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
-      else{
-        do{
+      else {
+        do {
         Senha_Correta = auth_senha(contas, *pos, &posOrigem);
-        }while(!Senha_Correta);
+        } while(!Senha_Correta);
         
         printf("| > Valor do depósito: ");
         scanf("%f", &valor_deposito);
         clearBuffer();
-        
         saldo_novo = contas[posOrigem].Saldo - valor_deposito;
+
         if (contas[posOrigem].tipo_conta == 1 && saldo_novo <= -1000) {
           printf("\034[33m| > Saldo insuficiente.\n");
         }
+
         else if (contas[posOrigem].tipo_conta == 2 && saldo_novo <= -5000) {
           printf("\034[33m| > Saldo insuficiente.\n");
         }
+
         else {
           contas[posOrigem].Saldo = saldo_novo;
           contas[posDest].Saldo += valor_deposito;
           printf("\033[32m| > Depósito concluído com sucesso.\n");
-          printf("\033[34m| > Saldo atual: %.2f\n", saldo_novo);
+          printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
         }
         validacaoDestino = 1;
         
       }
-    }while(!validacaoDestino);
+    } while(!validacaoDestino);
   }
   return OK;
 }
 
+
 // Funções auxiliares:
 // Suporte
-void tratarRes(Value err){
+
+void tratarRes(Value err){ // Tratamento de Erros das funções de tipo Value
     if (err == MAX_CONTAS) {
         printf("\033[31m| ERRO - Máximo de contas atingido.\n");
     } else if (err == CRIAR) {
@@ -398,8 +419,7 @@ void tratarRes(Value err){
     else{
         printf("\033[31m| ERRO - Erro de Sistema Desconhecido.\n");
     }
-    
-}
+} 
 
 void clearBuffer() { // Função de Limpeza de Buffer
   int c;
@@ -410,9 +430,7 @@ void clearBuffer() { // Função de Limpeza de Buffer
 // Funções de Arquivo:
 // Manipulação do Arquivo binário
 
-Value salvar(
-    Conta contas[],
-    int *pos) { // Função de Salvar a lista de contatos no arquivo binário
+Value salvar(Conta contas[], int *pos) { // Função de Salvar a lista de contatos no arquivo binário
   FILE *arq = fopen("contas.bin", "wb");
   if (arq == NULL)
     return ABRIR;
@@ -431,6 +449,8 @@ Value salvar(
   printf("\033[32m| > Arquivo Salvo!!\n");
   return OK;
 }
+
+
 Value carregar(
     Conta contas[],
     int *pos) { // Função de Carregar a lista de contatos do arquivo binário
@@ -452,6 +472,7 @@ Value carregar(
   printf("\033[32m| > Contas carregados!!\n");
   return OK;
 }
+
 
 Value salvar_extrato(
     Extrato extratos[],
@@ -477,9 +498,7 @@ Value salvar_extrato(
 
 
 
-carregar_extrato(
-  Extrato extratos[],
-  int *pos){
+carregar_extrato(Extrato extratos[], int *pos){
     FILE *f = fopen("extrato.bin", "rb");
     if (f == NULL)
       return ABRIR;
@@ -496,8 +515,6 @@ carregar_extrato(
   }
 
 
-
-
 int findCPF(Conta contas[], int pos, const char *cpf) {
   for (int i = 0; i < pos; i++) {
     if (strcmp(cpf, contas[i].cpf) == 0) {
@@ -506,6 +523,7 @@ int findCPF(Conta contas[], int pos, const char *cpf) {
   }
   return -1; // Retorna -1 se o CPF não for encontrado
 }
+
 
 Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
   if (contas[*user].extrato_size >= T_EXTRATO) { // Verifica o limite do Extrato

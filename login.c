@@ -1,17 +1,14 @@
 #include "functions.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 #define ASCII_MIN 33
 #define ASCII_MAX 126
 #define ALPHABET_SIZE (ASCII_MAX - ASCII_MIN + 1)
 
-Value login(Conta contas[], int *pos, int *user){ // Função de Login
+Value login(Conta contas[], int *pos, int *user) { // Função de Login
     int cpfCorrect = 1;
     int isAdmin = 0;
     int cont = 0;
     char cpf[T_CPF];
+
     do{
         printf("| > CPF (Ex: 112345678900): ");
         scanf("%s", cpf);
@@ -23,12 +20,12 @@ Value login(Conta contas[], int *pos, int *user){ // Função de Login
         if (strcmp(cpf, "admin") == 0) { // Verifica se o CPF é "admin"
             isAdmin = 1;
         }
-        else{
+        else {
             isAdmin = 0;
-            if(strlen(cpf) != 11){ // Verifica se o tamanho do cpf é válido
+            if(strlen(cpf) != 11) { // Verifica se o tamanho do cpf é válido
                 cpfCorrect = 0;
             }
-            if(cpfCorrect){
+            if(cpfCorrect) {
                 for (int i = 0; cpf[i] != '\0'; i++) { // Verifica se não há nenhum char não cpférico no número informado;
                     if (!isdigit(cpf[i]) && cpf[i] != '\0') {
                         cpfCorrect = 0;
@@ -37,56 +34,55 @@ Value login(Conta contas[], int *pos, int *user){ // Função de Login
                     }
                 }
                 find = findCPF( contas, *pos, cpf);
-                if(find == -1){
+                if(find == -1) {
                     cpfCorrect = 0;
                     printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
                 }
-                else{
+                else {
                     *user = find;
                 }
             }
-            else{
+            else {
                 printf("\033[34m| > CPF Inválido, tente novamente...\n");
                 cpf[0] = '\0';
             }
         }
-    }while(!cpfCorrect);
+
+    } while(!cpfCorrect);
     
     // Solicitação de Senha:
     int passwordValidate = 0;
     int adminTrue = 0;
     int cpfPos;
     char password[SENHA];
-    do{
+
+    do {
         printf("| > Senha: ");
         fgets(password, SENHA, stdin);
         password[strcspn(password, "\n")] = '\0'; // Remove o \n do final do cpf informado;
         if (!isAdmin) { // Se tentar entrar com Administrador, Verifica a senha com o de Admin
             int compare = compareHash(password, contas[*user].senha);
 
-            if(compare){
+            if(compare) {
                 passwordValidate = 1;
             }
-            else{
+            else {
                 printf("\033[34m| > Senha Inválida, tente novamente...\n");
             }
-            /*
-            */
-
         }
-        else{
+        else { 
             const char* adminPassword =  "Mpyuz>@"; // Senha é "Admin24"
-            if(compareHash(password, adminPassword)){
+            if(compareHash(password, adminPassword)) {
                 adminTrue = 1;
                 passwordValidate = 1;
             }
-            else{
+            else {
                 printf("\033[34m| > Senha Inválida, tente novamente...\n");
             }
         }
-    }while(!passwordValidate);
+    } while(!passwordValidate);
 
-    if(adminTrue){
+    if(adminTrue) {
         *user = -1;
     }
 
@@ -108,7 +104,7 @@ const char* hash(const char* senha) {
         }
         hash_senha[i] = (char)(shifted_index + ASCII_MIN);
     }
-    hash_senha[size] = '\0'; // Null terminate the string
+    hash_senha[size] = '\0';
     return hash_senha;
 }
 
@@ -135,9 +131,6 @@ int auth_senha(Conta contas[], int pos, int *user){
             else{
                 printf("\033[34m| > Senha Inválida, tente novamente...\n");
             }
-            /*
-            */
-
         
     }while(!passwordValidate);
 
