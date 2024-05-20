@@ -339,7 +339,7 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
       cpf_destino[strcspn(cpf_destino, "\n")] = '\0'; // Remove o \n do final do cpf informado;
       pos_dest = findCPF(contas, *pos, cpf_destino);
       
-      if(pos_dest == -1  && strcmp(cpf_destino, cpf_origem) == 0){
+      if(pos_dest == -1 || strcmp(cpf_destino, cpf_origem) == 0){
         printf("\033[34m| > CPF Inválido, tente novamente...\n");
       }
       else{
@@ -474,14 +474,16 @@ void clearBuffer() { // Função de Limpeza de Buffer
 };
 
 Value saveExtrato(Conta contas[], int *user, int tipo, float valor) {
-  time_t data = time(NULL); // Salva a data de agora
-  
+  time_t data_utc = time(NULL); // Salva a data de agora em UTC
+  struct tm *data_local = localtime(&data_utc);
+  data_local->tm_hour -= 3;
+  mktime(data_local);
   mover_extrato(contas, &*user); // Verifica se precisa mover o extrato
   
   Extrato nova_operacao; // Cria uma operação com os valores recebidos
   nova_operacao.tipo = tipo;
   nova_operacao.valor = valor;
-  nova_operacao.data = data;
+  nova_operacao.data = mktime(data_local);
   
   // Adiciona a nova operação ao extrato
   contas[*user].extrato[contas[*user].extrato_size] = nova_operacao;

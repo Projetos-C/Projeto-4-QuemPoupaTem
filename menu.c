@@ -100,11 +100,10 @@ int menu_user(){
 
 void enterSave(Conta contas[], int *pos){
   printf("\n|==================================|\n");
-  printf("|=   PRESSIONE ENTER PARA SALVAR  =|\n");
+  printf("|  PRESSIONE ENTER PARA SALVAR     |\n");
   printf("|==================================|\n");
   char vazio;
   scanf("%c", &vazio);
-  clearBuffer();
   salvar(contas, &*pos);
 }
 
