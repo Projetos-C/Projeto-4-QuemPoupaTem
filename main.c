@@ -72,6 +72,7 @@ int main(){
             else if(opcao >= 0 && opcao <= 3){
                 Value funcao = functions[opcao](contas, &pos, &user);
                 tratarRes(funcao);
+                enterSave(contas, &pos);
             }
             else{
                 printf("| > Opção Inválida...\n");

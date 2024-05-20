@@ -13,7 +13,6 @@
 
 typedef char* SenhaType; 
 
-
 typedef struct {
     int tipo; // 1 = Deposito / 2 = Débito / 3 = Transferência Receber / 4 = Trasnferência Pagar
     time_t data;
@@ -31,7 +30,8 @@ typedef struct { // Estrutura das contas
     int extrato_size;
 } Conta;
 
-typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTAS, SEM_CONTAS, SEM_EXTRATO, ACESSO_INVALIDO, NAO_ENCONTRADO, MAX_EXTRATO } Value; // Tipoes de respostas em funções
+
+typedef enum { OK, ABRIR, FECHAR, ESCREVER, LER, CRIAR, MAX_CONTAS, SEM_CONTAS, SEM_EXTRATOS, AUTENTICACAO, ACESSO_INVALIDO, NAO_ENCONTRADO} Value; // Tipoes de respostas em funções
 
 typedef int (*menu)(); // Forma simplificada de chamar funções do tipo menu
 typedef Value (*func)(Conta[], int*, int*); // Forma simplificada de chamar as funções principais
@@ -78,3 +78,4 @@ int compareHash(const char* senha, const char* hash_cpf);  // Verifica uma senha
 void clearBuffer();        // Limpeza de Buffer
 void tratarRes(Value err);  // Tratamento de Erros
 int findCPF(Conta contas[], int pos, const char* cpf); // Compara um cpf com a lista de contas
+void enterSave(Conta contas[], int *pos);

@@ -13,40 +13,44 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
   fgets(contas[*pos].nome, T_NOME, stdin);
   contas[*pos].nome[strcspn(contas[*pos].nome, "\n")] = '\0';
 
-  int cpfCorrect = 1;
+  int cpf_correto = 1;
   int cont = 0;
   char cpf[T_CPF];
   do {
-    cpfCorrect = 1;
+    cpf_correto = 1;
     printf("| > CPF (Ex: 112345678900): ");
     scanf("%s", cpf);
     clearBuffer();
     // Remove o \n do final do cpf informado;
     if (strlen(cpf) > 11 &&
         strlen(cpf) < 11) { // Verifica se o tamanho do cpf é válido
-      cpfCorrect = 0;
+      cpf_correto = 0;
     }
-    if (cpfCorrect) {
+    if (cpf_correto) {
       for (int i = 0; cpf[i] != '\0';
            i++) { // Verifica se não há nenhum char não cpférico no número
                   // informado;
         if (!isdigit(cpf[i]) && cpf[i] != '\0') {
-          cpfCorrect = 0;
+          cpf_correto = 0;
           break;
         }
       }
     }
-
     else {
       printf("\033[34m| > CPF Inválido, tente novamente...\n");
       cpf[0] = '\0';
     }
-  } while (!cpfCorrect);
+
+    if(findCPF(contas, *pos, cpf) != -1){
+      printf("\033[34m| > CPF já em Uso, tente novamente...\n");
+      cpf[0] = '\0';
+    }
+  } while (!cpf_correto);
   strcpy(contas[*pos].cpf, cpf);
   contas[*pos].cpf[strcspn(contas[*pos].cpf, "\n")] = '\0';
 
   char tipo_conta;
-  int isValidType = 0;
+  int is_valid_type = 0;
 
   printf("| > Tipo conta:\n");
   printf("|\n");
@@ -67,11 +71,11 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
 
     if (tipo_conta == 'c' || tipo_conta == 'p') {
       contas[*pos].tipo_conta = tipo_conta;
-      isValidType = 1;
+      is_valid_type = 1;
     } else {
       printf("\033[31m| > Tipo de conta invalido, Tente novamente...\n");
     }
-  } while (!isValidType);
+  } while (!is_valid_type);
 
   float saldo;
   int isValid =
@@ -95,10 +99,10 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
     }
   } while (!isValid); // Repita o loop enquanto isValid for 0 (saldo inválido)
 
-  int senhaCorrect;
+  int senha_correta;
   char senha[SENHA];
   do {
-    senhaCorrect = 1;
+    senha_correta = 1;
     printf("| > Digite sua senha: ");
     fgets(senha, SENHA, stdin);
 
@@ -107,13 +111,13 @@ Value novo_cliente(Conta contas[], int *pos, int *user) { // Função de Criar u
     if (strlen(senha) < 6) {
       printf("\033[34m| > Senha muito fraca, tente novamente com pelo menos 6 "
              "caracteres...\n");
-      senhaCorrect = 0; // Define senhaCorrect como 0 para repetir o loop
+      senha_correta = 0; // Define senha_correta como 0 para repetir o loop
     } else if (strlen(senha) >= SENHA) {
       printf("\033[34m| > Tamanho máximo de senha excedido, por favor, tente "
              "novamente...\n");
-      senhaCorrect = 0; // Define senhaCorrect como 0 para repetir o loop
+      senha_correta = 0; // Define senha_correta como 0 para repetir o loop
     }
-  } while (!senhaCorrect);
+  } while (!senha_correta);
   strcpy(contas[*pos].senha, hash(senha));
 
   if(*user == -2){
@@ -186,10 +190,6 @@ Value listar_cliente(Conta contas[], int *pos, int *user) { // Função de Lista
 
 
 
-
-
-
-
 // Funções Bancárias
 // Operações com valores monetários
 Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinheiro de uma conta
@@ -218,13 +218,13 @@ Value debito(Conta contas[], int *pos, int *user) { // Função de debitar dinhe
 
   float valor;
   if(validacao ) {
-      int Senha_Correta;
+      int senha_correta;
       int tipo_conta;
       float valor_taxa;
       float saldo_novo;
       do{
-        Senha_Correta = auth_senha(contas, *pos, &posicao);
-      }while(!Senha_Correta);
+        senha_correta = auth_senha(contas, *pos, &posicao);
+      }while(!senha_correta);
       printf("| > Valor a ser debitado: ");
       scanf("%f", &valor);
       clearBuffer();
@@ -282,11 +282,11 @@ Value deposito(Conta contas[], int *pos, int *user) { // essa eh a funcao de tra
   }
   float valor;
   if(validacao ) {
-      int Senha_Correta;
+      int senha_correta;
       float saldo_novo;
             do{
-        Senha_Correta = auth_senha(contas, *pos, &posicao);
-      }while(!Senha_Correta);
+        senha_correta = auth_senha(contas, *pos, &posicao);
+      }while(!senha_correta);
       printf("| > Valor a ser depositado: ");
       scanf("%f", &valor);
       clearBuffer();
@@ -305,8 +305,8 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
   char cpf_origem[T_CPF];
   char cpf_destino[T_CPF];
   int i;
-  int posOrigem;
-  int posDest;
+  int pos_origem;
+  int pos_dest;
   float saldo_novo;
   int validacao = 0;
   if(*user == -1){
@@ -314,8 +314,8 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
       printf("| > CPF de Origem: ");
       scanf("%s", cpf_origem);
       clearBuffer();
-      posOrigem = findCPF(contas, *pos, cpf_origem);
-      if(posOrigem == -1){
+      pos_origem = findCPF(contas, *pos, cpf_origem);
+      if(pos_origem == -1){
         printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
       }
       else{
@@ -325,42 +325,42 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
   }
   else{
     strcpy(cpf_origem, contas[*user].cpf);
-    posOrigem = *user;
+    pos_origem = *user;
     validacao = 1;
   }
 
   int validacaoDestino = 0;
   if (validacao) {
-      int Senha_Correta;
+      int senha_correta;
     do{
       printf("| > CPF de destino: ");
       scanf("%s", cpf_destino);
       clearBuffer();
       cpf_destino[strcspn(cpf_destino, "\n")] = '\0'; // Remove o \n do final do cpf informado;
-      posDest = findCPF(contas, *pos, cpf_destino);
+      pos_dest = findCPF(contas, *pos, cpf_destino);
       
-      if(posDest == -1){
-        printf("\033[34m| > CPF Não Encontrado, tente novamente...\n");
+      if(pos_dest == -1  && strcmp(cpf_destino, cpf_origem) == 0){
+        printf("\033[34m| > CPF Inválido, tente novamente...\n");
       }
       else{
         do{
-        Senha_Correta = auth_senha(contas, *pos, &posOrigem);
-        }while(!Senha_Correta);
+        senha_correta = auth_senha(contas, *pos, &pos_origem);
+        }while(!senha_correta);
         
         printf("| > Valor do depósito: ");
         scanf("%f", &valor);
         clearBuffer();
         
-        saldo_novo = contas[posOrigem].Saldo - valor;
-        if (contas[posOrigem].tipo_conta == 1 && saldo_novo <= -1000) {
+        saldo_novo = contas[pos_origem].Saldo - valor;
+        if (contas[pos_origem].tipo_conta == 1 && saldo_novo <= -1000) {
           printf("\034[33m| > Saldo insuficiente.\n");
         }
-        else if (contas[posOrigem].tipo_conta == 2 && saldo_novo <= -5000) {
+        else if (contas[pos_origem].tipo_conta == 2 && saldo_novo <= -5000) {
           printf("\034[33m| > Saldo insuficiente.\n");
         }
         else {
-          contas[posOrigem].Saldo = saldo_novo;
-          contas[posDest].Saldo += valor;
+          contas[pos_origem].Saldo = saldo_novo;
+          contas[pos_dest].Saldo += valor;
           printf("\033[32m| > Depósito concluído com sucesso.\n");
           printf("\033[34m| > Saldo atual: R$ %.2f\n", saldo_novo);
         }
@@ -369,8 +369,8 @@ Value transacao(Conta contas[], int *pos,int *user) { // Função de realizar tr
       }
     }while(!validacaoDestino);
   } 
-  saveExtrato(contas, &posOrigem, 4, valor);
-  saveExtrato(contas, &posDest, 3, valor);
+  saveExtrato(contas, &pos_origem, 4, valor);
+  saveExtrato(contas, &pos_dest, 3, valor);
   return OK;
 }
 
@@ -383,6 +383,7 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
   int posicao;
   float saldo_novo;
   int validacao = 0;
+  int senha_correta;
   if(*user == -1){
     do{
       printf("| > CPF: ");
@@ -400,10 +401,12 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
   else{
     posicao = *user;
   }
+  do{
+    senha_correta = auth_senha(contas, *pos, &*user);
+    }while(!senha_correta);
   
-
   if(contas[posicao].extrato_size == 0){
-    return SEM_EXTRATO;
+    return SEM_EXTRATOS;
   }
 
 
@@ -450,10 +453,10 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
   printf("| > Deseja Salvar Extrato em um Arquivo? (y/n) ");
   scanf("%c", &opc);
   if(opc == 'y'){
-    char fileName[100];
+    char file_name[100];
     printf("| > Nome do Arquivo: ");
-    scanf("%99s", fileName);  
-    gerar_arquivo_texto(contas, posicao, fileName);
+    scanf("%99s", file_name);  
+    gerar_arquivo_texto(contas, posicao, file_name);
   }
 
   return OK;
@@ -463,35 +466,6 @@ Value extrato(Conta contas[], int *pos, int *user) { // Função de gerar extrat
 
 // Funções auxiliares:
 // Suporte
-void tratarRes(Value err){ // Tratamento de Erros das funções de tipo Value
-    if (err == MAX_CONTAS) {
-        printf("\033[31m| ERRO - Máximo de contas atingido.\n");
-    } else if (err == CRIAR) {
-        printf("\033[31m| ERRO - Não foi possível criar o arquivo.\n");
-    } else if (err == SEM_CONTAS) {
-        printf("\033[31m| ERRO - Não existem contas salvas.\n");
-    } else if (err == ABRIR) {
-        printf("\033[31m| ERRO - Não foi possível abrir o arquivo.\n");
-    } else if (err == FECHAR) {
-        printf("\033[31m| ERRO - Não foi possível fechar o arquivo.\n");
-    } else if (err == ESCREVER) {
-        printf("\033[31m| ERRO - Não foi possível escrever em seu arquivo.\n");
-    } else if (err == LER) {
-        printf("\033[31m| ERRO - Não foi possível ler o seu arquivo.\n");
-    }  else if (err == SEM_EXTRATO) {
-        printf("\033[31m| ERRO - Lista de extratos está vazia.\n");
-    } else if (err == ACESSO_INVALIDO) {
-        printf("\033[31m| ERRO - Não foi possível validar o seu acesso.\n");
-    }  else if (err == MAX_EXTRATO) {
-        printf("\033[31m| ERRO - Tamanho do extrato excedido.\n");
-    } else if (err == OK) {
-        // Fazer nada em caso de sucesso 
-    } 
-    else{
-        printf("\033[31m| ERRO - Erro de Sistema Desconhecido.\n");
-    }
-    
-} 
 
 void clearBuffer() { // Função de Limpeza de Buffer
   int c;
@@ -527,5 +501,3 @@ Value mover_extrato(Conta contas[], int *user) {
     }
     return OK;
 }
-
-
